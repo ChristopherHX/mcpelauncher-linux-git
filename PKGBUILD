@@ -28,6 +28,7 @@ pkgver() {
 }
 prepare() {
   cd mcpelauncher-manifest
+  git reset --hard
   git submodule init
   git submodule update
 }
