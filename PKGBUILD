@@ -28,7 +28,9 @@ pkgver() {
 }
 prepare() {
   cd mcpelauncher-manifest
-  git reset --hard
+  git remote https://github.com/ChristopherHX/mcpelauncher-manifest.git
+  git remote get-url origin
+  git remote set-url origin
   git submodule init
   git submodule update
 }
