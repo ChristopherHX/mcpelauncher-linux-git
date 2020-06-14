@@ -1,20 +1,18 @@
 # Maintainer: Paul <paul@mrarm.io>
 pkgname=mcpelauncher-linux-git
-pkgver=v0.2
+pkgver=v0.3
 pkgrel=1
-pkgdesc="Minecraft: Pocket Edition launcher for Linux (Fork)"
+pkgdesc="Minecraft: Pocket Edition launcher for Linux (ng)"
 arch=('x86_64' 'i686')
-url="https://github.com/ChristopherHX/mcpelauncher-manifest"
+url="https://github.com/minecraft-linux/mcpelauncher-manifest"
 license=('GPL3' 'custom')
-makedepends_x86_64=('git' 'cmake' 'gcc-multilib')
-makedepends_i686=('git' 'cmake' 'gcc')
-depends_x86_64=('lib32-curl' 'lib32-libx11' 'lib32-zlib' 'lib32-libpng' 'lib32-libevdev' 'lib32-systemd' 'lib32-libxi' 'lib32-libegl' 'lib32-alsa-lib' 'lib32-libpulse')
-depends_i686=('curl' 'libx11' 'zlib' 'libpng' 'libevdev' 'systemd' 'libxi' 'libegl' 'alsa-lib' 'libpulse')
-optdepends=('mcpelauncher-msa: Xbox Live support' 'zenity: Select custom skins')
-provides=('mcpelauncher-client' 'mcpelauncher-server')
-conflicts=('mcpelauncher-client' 'mcpelauncher-server')
+makedepends=('git' 'cmake' 'clang')
+depends=('curl' 'libx11' 'zlib' 'libpng' 'libevdev' 'systemd' 'libxi' 'libegl')
+optdepends=('mcpelauncher-msa: Xbox Live support' 'zenity: Select custom skins' 'alsa-lib: Audio via alsa' 'libpulse: Audio via pulseaudio')
+provides=('mcpelauncher-client')
+conflicts=('mcpelauncher-client')
 source=(
-  'git://github.com/ChristopherHX/mcpelauncher-manifest.git'
+  'git://github.com/minecraft-linux/mcpelauncher-manifest.git#branch=ng'
   'nlohmann_json_license.txt::https://raw.githubusercontent.com/nlohmann/json/develop/LICENSE.MIT'
 )
 md5sums=(
@@ -28,14 +26,14 @@ pkgver() {
 }
 prepare() {
   cd mcpelauncher-manifest
-  git remote set-url origin https://github.com/ChristopherHX/mcpelauncher-manifest.git
+  git remote set-url origin https://github.com/minecraft-linux/mcpelauncher-manifest.git
   git submodule update --init --recursive
 }
 build() {
   cd mcpelauncher-manifest
   mkdir -p build
   cd build
-  cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=RelWithDebInfo -DENABLE_DEV_PATHS=OFF ..
+  CC=clang CXX=clang++ cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=RelWithDebInfo -DENABLE_DEV_PATHS=OFF ..
   make -j16
 }
 package() {
@@ -45,7 +43,6 @@ package() {
   install -Dm644 ../LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
   install -Dm644 ../msa-daemon-client/LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE.MIT"
   install -Dm644 ../mcpelauncher-linux-bin/FMod\ License.txt "$pkgdir/usr/share/licenses/$pkgname/fmod_license.txt"
-  install -Dm644 ../libhybris/LICENSE "$pkgdir/usr/share/licenses/$pkgname/libhybris_license.txt"
   install -Dm644 ../eglut/LICENSE "$pkgdir/usr/share/licenses/$pkgname/eglut_license.txt"
   install -Dm644 ../../nlohmann_json_license.txt "$pkgdir/usr/share/licenses/$pkgname/nlohmann_json_license.txt"
 }
